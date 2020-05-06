@@ -2,6 +2,11 @@
 
 <head>
     <title>TODO App</title>
+    <style>
+        input[type=checkbox]:checked+div.todolist {
+            text-decoration: line-through;
+        }
+    </style>
 </head>
 
 <body>
@@ -13,7 +18,7 @@
 
     <label for="dueDate">Due date:</label>
     <input type="date" id="dueDate" name="dueDate">
-    <p class="message"> </p>
+    <p id="message" style="display:none;">Enter a valid date.</p>
 
     <script src="todo-app.js"></script>
 </body>

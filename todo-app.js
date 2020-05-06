@@ -10,18 +10,33 @@ class Task {
     }
 
     toString() {
-        let htmlText = '<li class="task" ><div>'
+        let htmlText = '<li class="task" ><div class ="eachTask">'
         htmlText += this.name
         htmlText += ", " + this.currentDate.getDate() +
             "/" + (this.currentDate.getMonth() + 1);
         htmlText += ", " + "Due date: " + this.dueDate
-        htmlText += '<input type="checkbox" name="isDone" id="isDone">'
+        htmlText += '<input type="checkbox" onclick="strk()" name="isDone" id="isDone">'
         htmlText += '<button onclick="deleteTask(';
         htmlText += this.taskId;
         htmlText += ')">Delete</button>';
         htmlText += '</div></li>';
         return htmlText;
     }
+}
+
+function strk() {
+    console.log("called")
+    var a = document.querySelectorAll("#isDone")
+    for (let i = 0; i < a.length; i++) {
+        if (a[i].checked === true) {
+            taskList[i].isDone = true;
+            taskList[i].name = "<strike>" + taskList[i].name + "</strike>";
+            render()
+            document.getElementById("isDone").checked = true;
+
+        }
+    }
+
 }
 
 function render() {
@@ -50,14 +65,15 @@ function deleteTask(taskId) {
 function createTask() {
     const taskName = document.getElementById("taskName").value;
     const dueDate = document.getElementById("dueDate").value;
+    let msg = document.getElementById("message");
 
     if (dueDate < currDate) {
-        document.querySelector(".message").innerHTML = "Enter valid date."
+        msg.style.display = "block";
         return
+    } else {
+        msg.style.display = "none";
     }
 
-    //clear the message 
-    document.querySelector(".message").innerHTML = ""
 
     addTask(new Task(taskName, new Date(), false, dueDate));
 }
