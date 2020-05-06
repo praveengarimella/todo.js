@@ -1,13 +1,21 @@
 <!DOCTYPE html>
+
 <head>
     <title>TODO App</title>
 </head>
+
 <body>
     <ol>
         <div id="todolist"></div>
     </ol>
     <input type="text" name="taskName" id="taskName">
     <button onclick="createTask()">Add Task</button>
+
+    <label for="dueDate">Due date:</label>
+    <input type="date" id="dueDate" name="dueDate">
+    <p class="message"> </p>
+
     <script src="todo-app.js"></script>
 </body>
+
 </html>

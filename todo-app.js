@@ -1,18 +1,20 @@
 let taskList = []
-
+let currDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
 class Task {
-    constructor(name, dueDate, isDone) {
+    constructor(name, currentDate, isDone, dueDate) {
         this.taskId = Date.now();
         this.name = name;
-        this.dueDate = dueDate;
+        this.currentDate = currentDate;
         this.isDone = isDone;
+        this.dueDate = dueDate;
     }
 
     toString() {
         let htmlText = '<li class="task" ><div>'
         htmlText += this.name
-        htmlText += ", " + this.dueDate.getDate() 
-                 + "/" + this.dueDate.getMonth();
+        htmlText += ", " + this.currentDate.getDate() +
+            "/" + (this.currentDate.getMonth() + 1);
+        htmlText += ", " + "Due date: " + this.dueDate
         htmlText += '<input type="checkbox" name="isDone" id="isDone">'
         htmlText += '<button onclick="deleteTask(';
         htmlText += this.taskId;
@@ -34,12 +36,12 @@ function render() {
 function deleteTask(taskId) {
     taskList = taskList.filter(
         (t) => {
-            if(t.taskId != taskId) 
-            return t;
+            if (t.taskId != taskId)
+                return t;
         }
     );
     // call a web api to update the database on the server
-    
+
     // update the DOM
     render()
     console.log(taskList);
@@ -47,7 +49,17 @@ function deleteTask(taskId) {
 
 function createTask() {
     const taskName = document.getElementById("taskName").value;
-    addTask(new Task(taskName, new Date(), false));
+    const dueDate = document.getElementById("dueDate").value;
+
+    if (dueDate < currDate) {
+        document.querySelector(".message").innerHTML = "Enter valid date."
+        return
+    }
+
+    //clear the message 
+    document.querySelector(".message").innerHTML = ""
+
+    addTask(new Task(taskName, new Date(), false, dueDate));
 }
 
 function addTask(t) {
@@ -65,8 +77,8 @@ function init() {
     // get the JSON
     // assign it to taskList
     // render
-
-    task = new Task("welcome task", new Date("May 30, 2020"), false);
+    // var dueDate = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
+    task = new Task("welcome task", new Date("May 30, 2020"), false, currDate);
     addTask(task);
     console.log(task);
 }
