@@ -114,9 +114,25 @@ function addTask(t) {
   render();
 }
 
+function fetchData() {
+  var request = new XMLHttpRequest();
+  request.open("GET", "http://localhost:5000/api/todo/", true);
+  request.onload = function () {
+    if (request.status === 200) {
+      let data = JSON.parse(request.responseText);
+      taskList = data;
+      // console.log(taskList);
+      return data;
+    }
+  };
+  request.send();
+}
+
 function init() {
   console.log("init called");
-
+  fetchData();
+  console.log(taskList);
+  // console.log(task);
   // call a web api to retrieve the task list
   // write a function to send a api request
   // get the JSON
