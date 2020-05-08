@@ -15,7 +15,6 @@ class Task {
 
     toString() {
         let htmlText = '<li class="task" ><div>'
-        console.log(this.isDone)
         if(!this.isDone){
             htmlText += this.name
             htmlText += `<p hidden >${this.taskId} </p>`
@@ -125,7 +124,7 @@ function init() {
             task.taskId = parseInt(t.id)
             taskList.push(task)
             render()
-            console.log(taskList)    
+            // console.log(taskList)    
         });
         }
     request.send()
