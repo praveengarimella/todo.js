@@ -1,23 +1,28 @@
-let taskList = [];
-let check = [];
+var taskList = [];
+var check = [];
+var newList = [];
 let currDate = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
 class Task {
-  constructor(name, currentDate, isDone, dueDate) {
-    this.taskId = Date.now();
-    this.name = name;
-    this.currentDate = currentDate;
-    this.isDone = isDone;
-    this.dueDate = dueDate;
+  constructor(name, currentDate, isDone, dueDate, taskId) {
+    if (typeof taskId === "undefined") {
+      this.taskId = Date.now();
+      this.name = name;
+      this.currentDate = currentDate;
+      this.isDone = isDone;
+      this.dueDate = dueDate;
+    } else {
+      this.taskId = taskId;
+      this.name = name;
+      this.currentDate = currentDate;
+      this.isDone = isDone;
+      this.dueDate = dueDate;
+    }
   }
 
   toString() {
     let htmlText = '<li class="task" ><div class ="eachTask">';
     htmlText += this.name;
-    htmlText +=
-      ", " +
-      this.currentDate.getDate() +
-      "/" +
-      (this.currentDate.getMonth() + 1);
+    htmlText += ", " + this.currentDate;
     htmlText += ", " + "Due date: " + this.dueDate;
     htmlText +=
       '<input type="checkbox" onclick="strk(' +
@@ -35,23 +40,23 @@ function strk(x) {
   let id = x;
 
   if (isChecked(id) === 1) {
-    for (let i = 0; i < taskList.length; i++) {
-      if (taskList[i].taskId === id) {
-        taskList[i].isDone = true;
-        let updatedName = taskList[i].name;
+    for (let i = 0; i < newList.length; i++) {
+      if (newList[i].taskId === id) {
+        newList[i].isDone = true;
+        let updatedName = newList[i].name;
         updatedName = updatedName.replace("<strike>", "");
         updatedName = updatedName.replace("</strike>", "");
-        taskList[i].name = updatedName;
+        newList[i].name = updatedName;
         render();
         deleteId(id);
       }
     }
   } else {
-    for (let i = 0; i < taskList.length; i++) {
-      if (taskList[i].taskId === id) {
+    for (let i = 0; i < newList.length; i++) {
+      if (newList[i].taskId === id) {
         check.push(id);
-        taskList[i].isDone = false;
-        taskList[i].name = "<strike>" + taskList[i].name + "</strike>";
+        newList[i].isDone = false;
+        newList[i].name = "<strike>" + newList[i].name + "</strike>";
         render();
       }
     }
@@ -76,21 +81,21 @@ function isChecked(id) {
 function render() {
   const listUI = document.getElementById("todolist");
   listUI.innerHTML = "";
-  if (taskList.length === 0) listUI.innerHTML = "No tasks todo :-)";
-  taskList.forEach((task) => {
+  if (newList.length === 0) listUI.innerHTML = "No tasks todo :-)";
+  newList.forEach((task) => {
     listUI.innerHTML += task.toString();
   });
 }
 
 function deleteTask(taskId) {
-  taskList = taskList.filter((t) => {
+  newList = newList.filter((t) => {
     if (t.taskId != taskId) return t;
   });
   // call a web api to update the database on the server
 
   // update the DOM
   render();
-  console.log(taskList);
+  console.log(newList);
 }
 
 function createTask() {
@@ -109,7 +114,7 @@ function createTask() {
 }
 
 function addTask(t) {
-  taskList.push(t);
+  newList.push(t);
   // call a web api to update the database on the server
   render();
 }
@@ -122,6 +127,19 @@ function fetchData() {
       let data = JSON.parse(request.responseText);
       taskList = data;
       // console.log(taskList);
+      console.log(taskList);
+      for (let i = 0; i < taskList.length; i++) {
+        task = new Task(
+          taskList[i].name,
+          taskList[i].currentDate,
+          taskList[i].isDone,
+          taskList[i].dueDate,
+          taskList[i].taskId
+        );
+        check.push(taskList[i].taskId);
+        addTask(task);
+      }
+      console.log(check);
       return data;
     }
   };
@@ -131,7 +149,7 @@ function fetchData() {
 function init() {
   console.log("init called");
   fetchData();
-  console.log(taskList);
+  render();
   // console.log(task);
   // call a web api to retrieve the task list
   // write a function to send a api request
@@ -139,9 +157,9 @@ function init() {
   // assign it to taskList
   // render
   // var dueDate = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
-  task = new Task("welcome task", new Date("May 30, 2020"), false, currDate);
-  addTask(task);
-  console.log(task);
+
+  // addTask(task);
+  // console.log(task);
 }
 
 init();
