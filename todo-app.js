@@ -3,6 +3,7 @@ var check = [];
 var newList = [];
 var currDate = new Date();
 var date = currDate.getDate() + "/" + currDate.getMonth() + 1;
+var utc = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
 class Task {
   constructor(name, currentDate, isDone, dueDate, taskId) {
     if (typeof taskId === "undefined") {
@@ -107,12 +108,18 @@ function createTask() {
   const taskName = document.getElementById("taskName").value;
   const dueDate = document.getElementById("dueDate").value;
   let msg = document.getElementById("message");
+  console.log(taskName);
 
-  if (dueDate < currDate) {
-    msg.style.display = "block";
+  if (taskName === "") {
+    // msg.style.display = "block";
+    document.querySelector(".message").innerHTML = "Enter Task name.";
     return;
-  } else {
-    msg.style.display = "none";
+  }
+
+  if (dueDate < utc) {
+    // msg.style.display = "block";
+    document.querySelector(".message").innerHTML = "Enter a valid date.";
+    return;
   }
 
   addTask(new Task(taskName, new Date(), false, dueDate));

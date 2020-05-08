@@ -10,8 +10,8 @@ def index():
         data = request.json
         with open("task.json", "r") as read_file:
             data = json.load(read_file)
-            print(data)
-            print("hello")
+            # print(data)
+            # print("hello")
             return jsonify(data), 200
     return "<h1>Bad request</h1>", 400
 
@@ -20,7 +20,7 @@ def index():
 def update():
     if request.method == "POST":
         data = request.json
-        print(data)
+        # print(data)
 
         with open("task.json", "w") as write_file:
             json.dump(data, write_file)
