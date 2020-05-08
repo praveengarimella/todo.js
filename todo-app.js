@@ -1,13 +1,14 @@
 var taskList = [];
 var check = [];
 var newList = [];
-let currDate = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
+var currDate = new Date();
+var date = currDate.getDate() + "/" + currDate.getMonth() + 1;
 class Task {
   constructor(name, currentDate, isDone, dueDate, taskId) {
     if (typeof taskId === "undefined") {
       this.taskId = Date.now();
       this.name = name;
-      this.currentDate = currentDate;
+      this.currentDate = date;
       this.isDone = isDone;
       this.dueDate = dueDate;
     } else {
@@ -92,6 +93,10 @@ function deleteTask(taskId) {
     if (t.taskId != taskId) return t;
   });
   // call a web api to update the database on the server
+  var request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:5000/api/update/", true);
+  request.setRequestHeader("Content-Type", "application/json");
+  request.send(JSON.stringify(newList));
 
   // update the DOM
   render();
@@ -116,6 +121,12 @@ function createTask() {
 function addTask(t) {
   newList.push(t);
   // call a web api to update the database on the server
+
+  var request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:5000/api/update/", true);
+  request.setRequestHeader("Content-Type", "application/json");
+  request.send(JSON.stringify(newList));
+
   render();
 }
 
@@ -136,8 +147,10 @@ function fetchData() {
           taskList[i].dueDate,
           taskList[i].taskId
         );
-        check.push(taskList[i].taskId);
-        addTask(task);
+        // check.push(taskList[i].taskId);
+        console.log(task);
+        newList.push(task);
+        render();
       }
       console.log(check);
       return data;
@@ -156,10 +169,6 @@ function init() {
   // get the JSON
   // assign it to taskList
   // render
-  // var dueDate = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
-
-  // addTask(task);
-  // console.log(task);
 }
 
 init();
