@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <head>
+    <script src="{{ url_for('static', filename='todo-app.js') }}"></script>
+
     <title>TODO App</title>
 </head>
 <body>
@@ -7,7 +9,7 @@
         <div id="todolist"></div>
     </ol>
     <input type="text" name="taskName" id="taskName">
+    <input type = "date" name = "dueDate"id = "dueDate">
     <button onclick="createTask()">Add Task</button>
-    <script src="todo-app.js"></script>
 </body>
 </html>
