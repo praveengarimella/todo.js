@@ -1,72 +1,85 @@
-
-function Task(props) {
-    return <li>{props.name}, {props.dueDate.toLocaleTimeString()}</li>
-}
-
-class TodoList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {list: props.list};
-
-        this.handleAddTask = this.handleAddTask.bind(this);
+class TodoApp extends React.Component {
+    state = {
+      tasks: ['Welcome task', 'Task 1', 'Task 2']
+    };
+  
+    handleSubmit = task => {
+      this.setState({tasks: [...this.state.tasks, task]});
     }
-    handleAddTask(task) {
-        console.log("add task clicked");
-        this.state.list.push(task);
-        this.setState({list: this.state.list})
+    
+    handleDelete = (index) => {
+      const newArr = [...this.state.tasks];
+      newArr.splice(index, 1);
+      this.setState({tasks: newArr});
     }
+  
     render() {
-        return (
-            <div>
-                <h1>TODO List</h1>
-                <ol>
-                    {
-                        this.state.list.map((t) =>
-                            <Task key={t.id} name={t.name} dueDate={t.dueDate} />)
-                    }
-                </ol>
-                <TaskNameForm onAddTask={this.handleAddTask} />
+      return(
+          <div style={{minHeight: "100vh", display: "flex", 
+                        justifyContent: "center"}}>
+            <div style={{color: "blue"}}>
+                <h2>To_Do</h2>
+                <TodoList tasks={this.state.tasks} onDelete={this.handleDelete} />
+                <TaskForm onFormSubmit={this.handleSubmit} />
             </div>
-        );
+        </div>
+      );
     }
-}
-
-class TaskNameForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {value: ''};
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  
+  class TaskForm extends React.Component {
+    state = { term: '' };
+  
+    handleSubmit = (event) => {
+      event.preventDefault();
+      if(this.state.term === '') return;
+      this.props.onFormSubmit(this.state.term);
+      this.setState({ term: '' });
     }
-
-    handleSubmit(event) {
-        const taskList = this.props.taskList;
-        // create a task object
-        event.preventDefault();
-        const task = {id:Date.now(), name: this.state.value, 
-        dueDate: new Date()};
-        // add the task object to the task list
-        this.props.onAddTask(task);
-    }
-
-    handleChange(event) {
-        // code to set the state of the component
-        this.setState({value: event.target.value});
-    }
-
+  
     render() {
-        return(
-            <form onSubmit={this.handleSubmit}>
-                <input type="text" value={this.state.value} 
-                onChange={this.handleChange}/>
-                <input type="submit" value="Add Task" />
-            </form>
-        );
+      return(
+        <form onSubmit={this.handleSubmit}>
+          <input style={{marginRight: "10px"}}
+            type='text'
+            placeholder='Write your tasks here'
+            value={this.state.term}
+            onChange={(e) => this.setState({term: e.target.value})}
+          />
+          <button>Add task</button>
+        </form>
+      );
     }
-}
-
-ReactDOM.render(
-    <TodoList list={[]} />,
-    document.getElementById('todo')
-);
+  }
+  
+  
+  const TodoList = (props) => {
+    const todos = props.tasks.map((todo, index) => {
+      return <Todo content={todo} key={index} id={index} onDelete={props.onDelete} />
+    })
+    return( 
+        <div style={{maxHeight: "200px"}}>
+            {todos}
+        </div>
+    );
+  }
+  
+  const Todo = (props) => {
+    return(
+        <div>
+            <li>
+                {props.content}
+                <button style={{marginLeft: "15px"}} onClick={() =>
+                    {props.onDelete(props.id)}}>
+                        Delete task
+                </button>
+            </li>
+        </div>
+    );
+  }
+  
+  ReactDOM.render(
+    <TodoApp />,
+    document.querySelector('#todo')
+  );
