@@ -23,10 +23,13 @@ class Task {
 }
 
 function render() {
+    // console.log("hai")
+
     const listUI = document.getElementById("todolist")
-    listUI.innerHTML = "";
+    listUI.innerHTML = "Nothing";
     if (taskList.length === 0) listUI.innerHTML = "No tasks todo :-)"
     taskList.forEach((task) => {
+        // console.log("hai")
         listUI.innerHTML += task.toString();
     })
 }
@@ -39,48 +42,81 @@ function deleteTask(taskId) {
         }
     );
     // call a web api to update the database on the server
-    
+    const request = new XMLHttpRequest();
+    request.open('POST', '/api/deleteTask');
+
+    //request onload
+    request.onload = () => {
+
+      
+      // Extract JSON data from request
+      const data = JSON.parse(request.responseText);
+
+   
+  }
+
+    // Add data to send with request
+    const data = new FormData();
+  //   var myJSON = JSON.stringify(t);
+    data.append("taskId",t.taskId);
+
     // update the DOM
-    render()
-    console.log(taskList);
+    render();
+    console.log(taskList)
+
+    // Send request
+
+    request.send(data);
+    return false;
+    
 }
 
 function createTask() {
     const taskName = document.getElementById("taskName").value;
+    console.log(taskName)
     addTask(new Task(taskName, new Date(), false));
 }
 
 function addTask(t) {
     taskList.push(t)
     // call a web api to update the database on the server
-
-          const request = new XMLHttpRequest();
+    console.log("hi",t)
+    const request = new XMLHttpRequest();
           request.open('POST', '/api/addTask');
 
-          // Callback function for when request completes
+          //request onload
           request.onload = () => {
 
-              // Extract JSON data from request
-              const data = JSON.parse(request.responseText);
+            
+            // Extract JSON data from request
+            const data = JSON.parse(request.responseText);
 
-              // Update the result div
-              if (data.success) {
-                  const contents = `1 USD is equal to ${data.rate} ${currency}.`
-              }
-              else {
-              }
-          }
+         
+        }
 
           // Add data to send with request
           const data = new FormData();
-          data.append('Task', t);
+        //   var myJSON = JSON.stringify(t);
+          data.append("taskId",t.taskId);
+          data.append("name",t.name);
+          data.append("dueDate",t.dueDate);
+          data.append("isDone",t.isDone);
 
+
+
+
+
+
+    // update the DOM
+          render();
+          console.log(taskList)
           // Send request
+
           request.send(data);
           return false;
 
-    render();
-    console.log(taskList)
+
+
 }
 
 function init() {
@@ -92,7 +128,7 @@ function init() {
     // assign it to taskList
     // render
 
-    task = new Task("welcome task", new Date("May 30, 2020"), false);
+    var task = new Task("welcome task", new Date("May 30, 2020"), false);
     addTask(task);
     console.log(task);
 }
