@@ -1,7 +1,8 @@
 function Task(props) {
-    return <li style={{color: "blue"}}> {props.name}   
-			<input type="submit" value="Delete Task" onClick={()=>{ props.onDeleteTask(props.id)}}  />
-        </li>
+    return <li> {props.name} {props.dueDate.toLocaleString()}&nbsp;   
+		<input style={{backgroundColor: "red", width: "90px", 
+		height: "30px"}} type="submit" value="Delete Task" onClick={()=>{props.onDeleteTask(props.id)}}/>
+    	</li>
 	}
 
 class TodoList extends React.Component {
@@ -30,14 +31,14 @@ class TodoList extends React.Component {
 	
     render() {
         return (
-            <div>
-                <h1>TODO List</h1>
-                <ol style={{marginRight: "10px"}}>
+            <div style={{textAlign: "center"}}>
+                <h2>To_Do</h2>
+                <div style={{color: "red"}}>
                     {
                         this.state.list.map((t) =>
-                            <Task key={t.id} id = {t.id} name={t.name} dueDate={t.dueDate} onDeleteTask = {this.handleDeleteTask}/>)
+                            <Task key={t.id} id = {t.id} name={t.name} dueDate={t.dueDate} onDeleteTask={this.handleDeleteTask}/>)
                     }
-                </ol>
+                </div><br />
                 <TaskNameForm onAddTask={this.handleAddTask} />
             </div>
         );
@@ -46,7 +47,8 @@ class TodoList extends React.Component {
 
 class TaskNameForm extends React.Component {
     constructor(props) {
-        super(props);
+		super(props);
+		this.state = {value: '', date: ''};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -54,7 +56,8 @@ class TaskNameForm extends React.Component {
     handleSubmit(event) {
         // create a task object
         event.preventDefault();
-        const task = {id:Date.now(), name: this.state.value };
+		const task = {id:Date.now(), name: this.state.value,
+			dueDate: this.state.date };
         // add the task object to the task list
         this.props.onAddTask(task);
     }
@@ -66,11 +69,16 @@ class TaskNameForm extends React.Component {
 	
     render() {
         return(
-            <form onSubmit={this.handleSubmit}>
-				<input type="text" onChange={this.handleChange} 
-					placeholder="Enter your task here" /><br />
-                <input type="submit" value="Add Task" />
-            </form>
+			<div style={{alignItems: "center"}}>
+				<form onSubmit={this.handleSubmit}>
+					<label><b>Task name: </b></label><input style={{backgroundColor: "pink"}} type="text" onChange={this.handleChange} 
+						placeholder="Enter your task here" /><br /><br />
+					<label><b>dueDate: </b></label><input type="date" required onChange={() => {
+						this.setState({date: new Date(event.target.value)})
+					}}/>&nbsp;
+					<input style={{backgroundColor: "Green", width: "90px", height: "30px"}} type="submit" value="Add Task" />
+				</form>
+			</div>
         );
     }
 }
