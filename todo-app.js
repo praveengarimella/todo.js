@@ -1,5 +1,5 @@
 function Task(props) {
-    return <li>{props.name}, {props.dueDate.toLocaleTimeString()}</li>
+    return <li><input type = "checkbox"></input>{props.name}, {props.dueDate.toLocaleTimeString()}, <input type="button" value="Delete" onClick={() => {props.onDeleteTask(props.id)}}/> </li>
 }
 
 class TodoList extends React.Component {
@@ -8,23 +8,32 @@ class TodoList extends React.Component {
         this.state = {list: props.list};
 
         this.handleAddTask = this.handleAddTask.bind(this);
+        this.handleDeleteTask = this.handleDeleteTask.bind(this);
     }
+
     handleAddTask(task) {
         console.log("add task clicked");
         this.state.list.push(task);
         this.setState({list: this.state.list})
     }
+
+    handleDeleteTask(task) {
+        console.log("delete task clicked");
+        this.state.list.splice(task)
+        this.setState({list: this.state.list})
+    }
+
     render() {
         return (
             <div>
                 <h1>TODO List</h1>
                 <ol>
                     {
-                        this.state.list.map((t) =>
-                            <Task key={t.id} name={t.name} dueDate={t.dueDate} />)
+                    this.state.list.map((t) =>
+                        <Task key={t.id} name={t.name} dueDate={t.dueDate} onDeleteTask={this.handleDeleteTask}/>)
                     }
                 </ol>
-                <TaskNameForm onAddTask={this.handleAddTask} />
+                <TaskNameForm onAddTask={this.handleAddTask}/>
             </div>
         );
     }
@@ -47,6 +56,7 @@ class TaskNameForm extends React.Component {
         dueDate: new Date()};
         // add the task object to the task list
         this.props.onAddTask(task);
+        this.setState({value: ''})
     }
 
     handleChange(event) {
@@ -56,7 +66,7 @@ class TaskNameForm extends React.Component {
 
     render() {
         return(
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit} >
                 <input type="text" value={this.state.value} 
                 onChange={this.handleChange}/>
                 <input type="submit" value="Add Task" />
