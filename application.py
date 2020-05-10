@@ -25,7 +25,7 @@ def update():
         with open("task.json", "w") as write_file:
             json.dump(data, write_file)
 
-    return "<h1>Bad Request</h1>", 400
+    return "<h1>Updated</h1>", 200
 
 
 if __name__ == "__main__":

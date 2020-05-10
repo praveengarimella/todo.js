@@ -44,7 +44,7 @@ function strk(x) {
   if (isChecked(id) === 1) {
     for (let i = 0; i < newList.length; i++) {
       if (newList[i].taskId === id) {
-        newList[i].isDone = true;
+        newList[i].isDone = false;
         let updatedName = newList[i].name;
         updatedName = updatedName.replace("<strike>", "");
         updatedName = updatedName.replace("</strike>", "");
@@ -57,7 +57,7 @@ function strk(x) {
     for (let i = 0; i < newList.length; i++) {
       if (newList[i].taskId === id) {
         check.push(id);
-        newList[i].isDone = false;
+        newList[i].isDone = true;
         newList[i].name = "<strike>" + newList[i].name + "</strike>";
         render();
       }
@@ -145,7 +145,7 @@ function fetchData() {
       let data = JSON.parse(request.responseText);
       taskList = data;
       // console.log(taskList);
-      console.log(taskList);
+      // console.log(taskList);
       for (let i = 0; i < taskList.length; i++) {
         task = new Task(
           taskList[i].name,
@@ -155,11 +155,11 @@ function fetchData() {
           taskList[i].taskId
         );
         // check.push(taskList[i].taskId);
-        console.log(task);
+        // console.log(task);
         newList.push(task);
         render();
       }
-      console.log(check);
+      // console.log(check);
       return data;
     }
   };
