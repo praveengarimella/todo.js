@@ -10,11 +10,17 @@ class TodoList extends React.Component {
         super(props);
 		
 		this.state = {list: props.list};
+		this.handleAddTask = this.handleAddTask.bind(this);
         this.handleDeleteTask = this.handleDeleteTask.bind(this);
-        this.handleAddTask = this.handleAddTask.bind(this);
-    }
+	}
 
-    handleDeleteTask(id){
+    handleAddTask(task) {
+        console.log("add task clicked");
+        this.state.list.push(task);
+        this.setState({list: this.state.list})
+	}
+
+	handleDeleteTask(id){
         console.log("Delete task clicked");
         this.state.list = this.state.list.filter(task =>{
             if(task.id != id)
@@ -22,12 +28,6 @@ class TodoList extends React.Component {
         })
         this.setState({list: this.state.list})
     }
-
-    handleAddTask(task) {
-        console.log("add task clicked");
-        this.state.list.push(task);
-        this.setState({list: this.state.list})
-	}
 	
     render() {
         return (
