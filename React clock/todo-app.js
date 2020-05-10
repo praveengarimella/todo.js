@@ -1,85 +1,81 @@
-class TodoApp extends React.Component {
-    state = {
-      tasks: ['Welcome task', 'Task 1', 'Task 2']
-    };
-  
-    handleSubmit = task => {
-      this.setState({tasks: [...this.state.tasks, task]});
+function Task(props) {
+    return <li style={{color: "blue"}}> {props.name}   
+			<input type="submit" value="Delete Task" onClick={()=>{ props.onDeleteTask(props.id)}}  />
+        </li>
+	}
+
+class TodoList extends React.Component {
+    constructor(props) {
+        super(props);
+		
+		this.state = {list: props.list};
+        this.handleDeleteTask = this.handleDeleteTask.bind(this);
+        this.handleAddTask = this.handleAddTask.bind(this);
     }
-    
-    handleDelete = (index) => {
-      const newArr = [...this.state.tasks];
-      newArr.splice(index, 1);
-      this.setState({tasks: newArr});
+
+    handleDeleteTask(id){
+        console.log("Delete task clicked");
+        this.state.list = this.state.list.filter(task =>{
+            if(task.id != id)
+                return task;
+        })
+        this.setState({list: this.state.list})
     }
-  
+
+    handleAddTask(task) {
+        console.log("add task clicked");
+        this.state.list.push(task);
+        this.setState({list: this.state.list})
+	}
+	
     render() {
-      return(
-          <div style={{minHeight: "100vh", display: "flex", 
-                        justifyContent: "center"}}>
-            <div style={{color: "blue"}}>
-                <h2>To_Do</h2>
-                <TodoList tasks={this.state.tasks} onDelete={this.handleDelete} />
-                <TaskForm onFormSubmit={this.handleSubmit} />
+        return (
+            <div>
+                <h1>TODO List</h1>
+                <ol style={{marginRight: "10px"}}>
+                    {
+                        this.state.list.map((t) =>
+                            <Task key={t.id} id = {t.id} name={t.name} dueDate={t.dueDate} onDeleteTask = {this.handleDeleteTask}/>)
+                    }
+                </ol>
+                <TaskNameForm onAddTask={this.handleAddTask} />
             </div>
-        </div>
-      );
+        );
     }
-  }
-  
-  
-  class TaskForm extends React.Component {
-    state = { term: '' };
-  
-    handleSubmit = (event) => {
-      event.preventDefault();
-      if(this.state.term === '') return;
-      this.props.onFormSubmit(this.state.term);
-      this.setState({ term: '' });
+}
+
+class TaskNameForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
-  
+
+    handleSubmit(event) {
+        // create a task object
+        event.preventDefault();
+        const task = {id:Date.now(), name: this.state.value };
+        // add the task object to the task list
+        this.props.onAddTask(task);
+    }
+
+    handleChange(event) {
+        // code to set the state of the component
+        this.setState({value: event.target.value});
+	}
+	
     render() {
-      return(
-        <form onSubmit={this.handleSubmit}>
-          <input style={{marginRight: "10px"}}
-            type='text'
-            placeholder='Write your tasks here'
-            value={this.state.term}
-            onChange={(e) => this.setState({term: e.target.value})}
-          />
-          <button>Add task</button>
-        </form>
-      );
+        return(
+            <form onSubmit={this.handleSubmit}>
+				<input type="text" onChange={this.handleChange} 
+					placeholder="Enter your task here" /><br />
+                <input type="submit" value="Add Task" />
+            </form>
+        );
     }
-  }
-  
-  
-  const TodoList = (props) => {
-    const todos = props.tasks.map((todo, index) => {
-      return <Todo content={todo} key={index} id={index} onDelete={props.onDelete} />
-    })
-    return( 
-        <div style={{maxHeight: "200px"}}>
-            {todos}
-        </div>
-    );
-  }
-  
-  const Todo = (props) => {
-    return(
-        <div>
-            <li>
-                {props.content}
-                <button style={{marginLeft: "15px"}} onClick={() =>
-                    {props.onDelete(props.id)}}>
-                        Delete task
-                </button>
-            </li>
-        </div>
-    );
-  }
-  
-  ReactDOM.render(
-    <TodoApp />,
-    document.querySelector('#todo')
-  );
+}
+
+ReactDOM.render(
+    <TodoList list={[]} />,
+    document.getElementById('todo')
+);
