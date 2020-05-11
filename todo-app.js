@@ -1,5 +1,5 @@
 function Task(props) {
-    return <li><input type = "checkbox"></input>{props.name}, {props.dueDate.toLocaleTimeString()}, <input type="button" value="Delete" onClick={() => {props.onDeleteTask(props.id)}}/> </li>
+    return <li><input type = "checkbox"/> {props.name}, {props.dueDate.toLocaleTimeString()},{props.dueDate.toLocaleString()} <input type="button" value="Delete" onClick={() => {props.onDeleteTask(props.id)}}/> </li>
 }
 
 class TodoList extends React.Component {
@@ -17,10 +17,13 @@ class TodoList extends React.Component {
         this.setState({list: this.state.list})
     }
 
-    handleDeleteTask(task) {
+    handleDeleteTask(id) {
         console.log("delete task clicked");
-        this.state.list.splice(task)
-        this.setState({list: this.state.list})
+        let newList = this.state.list.filter(taskDelete => {
+            if(taskDelete.id !== id)
+                return taskDelete;
+        })
+        this.setState({list: newList})
     }
 
     render() {
@@ -30,7 +33,7 @@ class TodoList extends React.Component {
                 <ol>
                     {
                     this.state.list.map((t) =>
-                        <Task key={t.id} name={t.name} dueDate={t.dueDate} onDeleteTask={this.handleDeleteTask}/>)
+                        <Task key={t.id} name={t.name} dueDate={t.dueDate} onDeleteTask={this.handleDeleteTask} id = {t.id}/>)
                     }
                 </ol>
                 <TaskNameForm onAddTask={this.handleAddTask}/>
@@ -46,6 +49,7 @@ class TaskNameForm extends React.Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDate = this.handleDate.bind(this);
     }
 
     handleSubmit(event) {
@@ -64,13 +68,19 @@ class TaskNameForm extends React.Component {
         this.setState({value: event.target.value});
     }
 
+    handleDate(event) {
+        this.setState({dueDate: event.target.value});
+    }
+
     render() {
         return(
-            <form onSubmit={this.handleSubmit} >
+            <form onSubmit={this.handleSubmit} > 
                 <input type="text" value={this.state.value} 
                 onChange={this.handleChange}/>
-                <input type="submit" value="Add Task" />
-            </form>
+                <input type="date" value={this.state.dueDate} 
+                onChange={this.handleDate} />
+                <input type="submit" value="Add Task" />       
+            </form>       
         );
     }
 }
