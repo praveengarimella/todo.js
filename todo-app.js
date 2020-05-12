@@ -1,5 +1,5 @@
 function Task(props) {
-    return <li>{props.name}, {props.dueDate.toLocaleTimeString()} <button onClick={() =>{props.onDeleteTask(props.taskid)}}> Delete</button></li>
+    return <li>{props.name}, {props.dueDate.toLocaleTimeString()} <button onClick={() =>{props.onDeleteTask(props.taskid)}}> Delete</button><input type = "Checkbox"/></li>
 }
 
 class TodoList extends React.Component {
