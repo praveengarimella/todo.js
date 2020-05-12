@@ -1,5 +1,5 @@
 function Task(props) {
-    return <li>{props.name}, {props.dueDate.toLocaleTimeString()}, <button onClick={() => {props.delete_item(props.task_id) }}>Delete</button>
+    return <li><input type = "checkbox"></input>{props.name}, {props.dueDate.toLocaleTimeString()}, <button onClick={() => {props.delete_item(props.task_id) }}>Delete</button>
     </li>
 }
 
