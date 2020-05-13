@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <head>
     <title>TODO App</title>
+    <script type = "text/javascript" 
+         src = "{{ url_for('static', filename = 'todo-app.js') }}" ></script>
 </head>
 <body>
-    <ol>
+    <h1>Todo List</h1>
+    <ul>
         <div id="todolist"></div>
-    </ol>
+    </ul>
     <input type="text" name="taskName" id="taskName">
+    <input type="date" name="dueDate" id="dueDate">
     <button onclick="createTask()">Add Task</button>
-    <script src="todo-app.js"></script>
 </body>
 </html>
