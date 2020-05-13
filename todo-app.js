@@ -4,7 +4,7 @@ function Task(props) {
     <strong>Created on:</strong> {new Date().getMonth()}/{new Date().getDate()},
     <strong>Due date:</strong> {props.dueDate}
     <input type="checkbox" />
-    <button onClick={() => { props.deleteTask(props.id) }}>Delete Task</button>
+    <button onClick={() => { props.deleteTask(props.id) }}>Delete</button>
   </li>
 }
 
@@ -46,7 +46,7 @@ class ToDo extends React.Component {
               name={t.name}
               dueDate={t.dueDate}
               Date={t.date}
-              deleteTask={this.handleDeleteTask} />,
+              deleteTask={this.handleDeleteTask} />
           )}
         </ol>
         <Form onAddTask={this.handleAddTask} />
@@ -90,7 +90,6 @@ class Form extends React.Component {
       dueDate: this.state.datevalue
     };
     this.props.onAddTask(task);
-
 
   }
 
