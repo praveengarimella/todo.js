@@ -1,7 +1,9 @@
 function Task(props) {
-  return <li><strong>{props.name}</strong>,
-              {new Date().toDateString()},
-              <input type="checkbox" />
+
+  return <li>{props.name},
+    <strong>Created on:</strong> {new Date().getMonth()}/{new Date().getDate()},
+    <strong>Due date:</strong> {props.dueDate}
+    <input type="checkbox" />
     <button onClick={() => { props.deleteTask(props.id) }}>Delete Task</button>
   </li>
 }
@@ -40,8 +42,10 @@ class ToDo extends React.Component {
         <ol>{
           this.state.list.map((t) =>
             <Task key={t.id}
-              name={t.name}
               id={t.id}
+              name={t.name}
+              dueDate={t.dueDate}
+              Date={t.date}
               deleteTask={this.handleDeleteTask} />,
           )}
         </ol>
@@ -56,20 +60,35 @@ class ToDo extends React.Component {
 class Form extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { value: '' };
+    this.state = {
+      value: '',
+      datevalue: 'No duedate'
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
   }
 
   handleChange(event) {
     this.setState({ value: event.target.value });
   }
 
+  handleDateChange(event) {
+    this.setState({ datevalue: event.target.value });
+
+  }
+
   handleSubmit(event) {
     const tasksListItems = this.props.tasksListItems;
+    // const date = new Date()
     event.preventDefault();
-    const task = { id: Date.now(), name: this.state.value, dueDate: new Date() };
+    const task = {
+      id: Date.now(),
+      name: this.state.value,
+      date: new Date(),
+      dueDate: this.state.datevalue
+    };
     this.props.onAddTask(task);
 
 
@@ -81,12 +100,17 @@ class Form extends React.Component {
         <input
           type="text"
           value={this.state.value}
-          onChange={this.handleChange}
-        />
+          onChange={this.handleChange} />
+
+        <input
+          type="date"
+          value={this.state.datevalue}
+          date-format="DD MMMM YYYY"
+          onChange={this.handleDateChange} />
+
         <input
           type="submit"
-          value="Add Task" />
-
+          value="AddTask" />
 
       </form>
 
