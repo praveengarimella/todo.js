@@ -8,11 +8,15 @@ class TodoList extends React.Component {
         this.state = {list: props.list};
 
         this.handleAddTask = this.handleAddTask.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
     handleAddTask(task) {
         console.log("add task clicked");
         this.state.list.push(task);
         this.setState({list: this.state.list})
+    }
+    handleDelete(id){
+        console.log(id)
     }
     render() {
         return (
@@ -20,9 +24,13 @@ class TodoList extends React.Component {
                 <h1>TODO List</h1>
                 <ol>
                     {
-                        this.state.list.map((t) =>
-                            <Task key={t.id} name={t.name} dueDate={t.dueDate} />)
-                    }
+                        this.props.list.map((t) => {
+                            return (
+                            <div>
+                            <Task key={t.id} name={t.name} dueDate={t.dueDate} />
+                            <button value={t.id} onClick={() => this.handleDelete(t.id)}>Delete</button>
+                            </div>);
+                    })}
                 </ol>
                 <TaskNameForm onAddTask={this.handleAddTask} />
             </div>
