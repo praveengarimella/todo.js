@@ -16,7 +16,15 @@ class TodoList extends React.Component {
         this.setState({list: this.state.list})
     }
     handleDelete(id){
-        console.log(id)
+        const newList=[];
+        console.log(this.state.list)
+        this.state.list.map((t) => {
+            console.log(t)
+            if(t.id!=id)
+                this.newList.push(t);
+
+        })
+        console.log(newList);
     }
     render() {
         return (
@@ -24,7 +32,7 @@ class TodoList extends React.Component {
                 <h1>TODO List</h1>
                 <ol>
                     {
-                        this.props.list.map((t) => {
+                        this.state.list.map((t) => {
                             return (
                             <div>
                             <Task key={t.id} name={t.name} dueDate={t.dueDate} />
