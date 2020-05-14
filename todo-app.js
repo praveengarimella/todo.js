@@ -1,11 +1,11 @@
 function Task(props) {
-    return <li>{props.name}, {props.dueDate.toLocaleTimeString()}</li>
+    return <li>{props.name}, {props.dueDate}</li>
 }
 
 class TodoList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {list: props.list};
+        this.state = {list: props.list,[props.name]:props.name};
 
         this.handleAddTask = this.handleAddTask.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
@@ -16,16 +16,25 @@ class TodoList extends React.Component {
         this.setState({list: this.state.list})
     }
     handleDelete(id){
-        const newList=[];
-        console.log(this.state.list)
-        this.state.list.map((t) => {
-            console.log(t)
-            if(t.id!=id)
-                this.newList.push(t);
-
-        })
-        console.log(newList);
+        const newList=this.state.list.filter(
+            (t) => {
+                if(t.id != id) 
+                return t;});
+        this.setState({list:newList});
+        
     }
+    checkvalue(id){
+        const newList = this.state.list.filter((t) =>{
+            if(t.id===id){
+                   event.target.checked?t.name=<strike value={t.name}>{t.name}</strike>:t.name=tname;
+                }
+                return t;
+            }
+            
+            )
+            console.log(newList)
+            this.setState({list:newList})
+        }
     render() {
         return (
             <div>
@@ -37,6 +46,7 @@ class TodoList extends React.Component {
                             <div>
                             <Task key={t.id} name={t.name} dueDate={t.dueDate} />
                             <button value={t.id} onClick={() => this.handleDelete(t.id)}>Delete</button>
+                            <input type="checkbox" name="isDone" onChange={() => this.checkvalue(t.id)} value={t.id}></input>
                             </div>);
                     })}
                 </ol>
@@ -49,39 +59,70 @@ class TodoList extends React.Component {
 class TaskNameForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {value: '',dueDate:''};
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    deadLine(b){
+        var today = new Date();
+        var due=new Date(b)
+        // console.log(due.getFullYear())
+        return today.getTime() < due.getTime()
+
     }
 
     handleSubmit(event) {
         const taskList = this.props.taskList;
         // create a task object
         event.preventDefault();
-        const task = {id:Date.now(), name: this.state.value, 
-        dueDate: new Date()};
+        var date= new Date(this.state.dueDate)
+        if (this.deadLine(date)){
+            const task = {id:Date.now(), name: this.state.value, 
+            dueDate:this.state.dueDate};
+            this.props.onAddTask(task);
+        }else{
+            const task = {id:Date.now(), name: this.state.value, 
+                dueDate:"due date completed"};
+            this.props.onAddTask(task);
+        }
         // add the task object to the task list
-        this.props.onAddTask(task);
+        
     }
 
     handleChange(event) {
         // code to set the state of the component
-        this.setState({value: event.target.value});
+        this.setState({[event.target.name]: event.target.value });
     }
 
     render() {
         return(
             <form onSubmit={this.handleSubmit}>
-                <input type="text" value={this.state.value} 
+                <input type="text" name="value" value={this.state.value} 
+                onChange={this.handleChange}/>
+                <input type="date" name = "dueDate" value={this.state.dueDate}
                 onChange={this.handleChange}/>
                 <input type="submit" value="Add Task" />
             </form>
         );
     }
 }
+function init() {    
+    console.log("inside init")   
+    const request=new new XMLHttpRequest()
+    request.open("GET" , "/api/todo")
+    request.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+    request.onload = () => {
+        const response = JSON.parse(request.responseText);
+        console.log(response)
+        if (request.status === 200) {
+            console.log("hamayya")
+        }
+    }
+    request.send(ReactDOM.render(
+        <TodoList list={[]} />,
+        document.getElementById('todo')
+    ));
+}
 
-ReactDOM.render(
-    <TodoList list={[]} />,
-    document.getElementById('todo')
-);
+
