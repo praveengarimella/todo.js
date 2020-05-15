@@ -1,0 +1,61 @@
+html body {
+  background-image: url("/assets/img/two.jpg");
+  background-size: cover;
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+html body header p {
+  margin-top: 80px;
+  font-size: 50px;
+  font-weight: 600;
+  color: #353ab8;
+}
+
+html body table#todolist {
+  font-size: 25px;
+  text-align: center;
+}
+
+html body table#todolist tr.task {
+  padding: 10px;
+}
+
+html body table#todolist tr.task.completed {
+  text-decoration: line-through;
+}
+
+html body table#todolist tr.task td {
+  padding: 20px;
+}
+
+html body input#taskName, html body input#dueDate {
+  padding: 10px;
+  margin: 5px;
+  height: 25px;
+  width: 200px;
+  border-radius: 5px;
+  border-bottom: 2px solid black;
+}
+
+html body input#taskName:focus, html body input#dueDate:focus {
+  height: 25px;
+  width: 200px;
+  background-color: #222222;
+  color: #cccccc;
+}
+
+html body button {
+  padding: 10px;
+  border-radius: 5px;
+  height: 50px;
+  color: #cccccc;
+  background-color: #353ab8;
+  font-weight: 700;
+}
+
+html body button:hover {
+  color: #fff;
+  cursor: pointer;
+}
+/*# sourceMappingURL=style.css.map */
