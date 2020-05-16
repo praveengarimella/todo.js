@@ -89,5 +89,5 @@ class TaskNameForm extends React.Component {
 
 ReactDOM.render(
     <TodoList list={[]} />,
-    document.getElementById('props')
+    document.getElementById('todo')
 );
