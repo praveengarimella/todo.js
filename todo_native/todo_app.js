@@ -1,18 +1,38 @@
 import { StyleSheet, Text, View, Form, Button,Input,List, ListItem, ListView, TextInput, YellowBox } from "react-native";
 import React from "react";
+import {Card} from "react-native-elements";
 // import DatePicker from 'react-native-datepicker';
 
 
     function Task(props) {
 
-        console.log(props)
+        // console.log(props)
         if(props.isDone==true){                
             console.log("Entered isDone")
-            return <Text style={{ backgroundColor: "#D1AB3E"}}>{props.name} {props.dueDate} {props.delete} {props.mark}</Text>;
+            return ( <View>
+                      {/* <Card containerStyle={{ backgroundColor: "#66D19F"}}>
+                      </Card> */}
+
+                      <Text>{props.name} {props.dueDate}</Text>
+                      {props.delete} 
+                    </View>
+                    
+                    );
             
 
         }else{
-            return <Text style={{ backgroundColor: "red"}}>{props.name} {props.dueDate} {props.delete} {props.mark}</Text>;
+            console.log(props);
+            return  (<View>
+                        {/* <Card containerStyle={{ backgroundColor: "#B9B99B"}}>
+                        </Card> */}
+
+                        <Text>{props.name} {props.dueDate} </Text>
+                        {props.delete}
+                        {props.mark}
+
+
+                  </View>
+                  );
         }
         
     }
@@ -29,6 +49,7 @@ import React from "react";
         handleAddTask(task) {
             console.log("add task clicked");
             this.setState({ list:[...this.state.list,task] })
+            console.log("Task added :",this.state.list);
         }
     
         handleDeleteTask(id) {
@@ -82,14 +103,14 @@ import React from "react";
             const id = Date.now();
             console.log("id",id);
             const task = { id: id, name: this.state.value, 
-                           dueDate:new Date().toDateString(), 
+                           dueDate:this.state.dueDate, 
                            isDone:false,
-                           delete: <Button onPress={() => this.deleteTask(id)} title="delete"></Button>,
-                           mark:<Button onPress= {() => this.markTask(id)} title="mark"></Button>};
+                           delete: <Button onPress={() => this.deleteTask(id)} title="delete" color="#009933" />,
+                           mark:<Button onPress= {() => this.markTask(id)} title="mark" color="#009933"/>};
             console.log(task);
             this.props.onAddTask(task);
-            this.state.value=""
-            this.state.dueDate="May 18      "
+            this.setState({value:""});
+            this.setState({dueDate:""});
     
         }
     
@@ -113,8 +134,9 @@ import React from "react";
             console.log("render")
             return (
                 <View>
-                    <TextInput style={{padding:5, backgroundColor :  "white" }}type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter Task Name :" />
-                    <Button title = "Add Task" onPress={this.handleSubmit} />
+                    <TextInput style={{backgroundColor :  "white" }}type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter Task Name :" />
+                    <TextInput style={{backgroundColor :  "white" }}type="date" value={this.state.dueDate} onChange={this.handleDate} placeholder="Enter Due Date :" />
+                    <Button title = "Add Task" onPress={this.handleSubmit} color="#009933"  />
                 </View>
                     
             );
