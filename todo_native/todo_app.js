@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, Form, Button,Input,List, ListItem, ListView, TextInput, YellowBox } from "react-native";
+import { StyleSheet, Text, View, Form, Button,Input,List, ListItem, ListView, TextInput, YellowBox, ScrollView } from "react-native";
 import React from "react";
 import {Card} from "react-native-elements";
-// import DatePicker from 'react-native-datepicker';
+import DatePicker from 'react-native-datepicker';
+
+
 
 
     function Task(props) {
@@ -10,11 +12,11 @@ import {Card} from "react-native-elements";
         if(props.isDone==true){                
             console.log("Entered isDone")
             return ( <View>
-                      {/* <Card containerStyle={{ backgroundColor: "#66D19F"}}>
-                      </Card> */}
-
-                      <Text>{props.name} {props.dueDate}</Text>
+                     <Card containerStyle={{padding: 10, margin :5, backgroundColor: 'green', alignContent: 'center'}}>
+                      <Text style={{paddingTop:10 ,margin:10 ,fontSize:25 }}>{props.name} {props.dueDate}</Text> 
                       {props.delete} 
+                      </Card>
+
                     </View>
                     
                     );
@@ -23,14 +25,11 @@ import {Card} from "react-native-elements";
         }else{
             console.log(props);
             return  (<View>
-                        {/* <Card containerStyle={{ backgroundColor: "#B9B99B"}}>
-                        </Card> */}
-
-                        <Text>{props.name} {props.dueDate} </Text>
-                        {props.delete}
+                        <Card containerStyle={{padding: 10, margin :5,  backgroundColor: 'skyblue', alignContent: 'center'}}>
+                        <Text style={{paddingTop:10 ,margin:10 ,fontSize:25,color: 'aquawhite'}}>{props.name} {props.dueDate}</Text>
+                        {props.delete} 
                         {props.mark}
-
-
+                        </Card>
                   </View>
                   );
         }
@@ -54,31 +53,44 @@ import {Card} from "react-native-elements";
     
         handleDeleteTask(id) {
             console.log(id);
-            this.list = this.state.list.filter((t) => {
-                if(t.id != id) {
-                    return t;
+            const list1 = this.state.list
+
+            for( var i = 0; i < list1.length; i++){ 
+                if ( list1[i].id === id ) { 
+                  list1.splice(i, 1); i--; 
                 }
-            })
-            this.setState({list: this.list})
+              }
+              console.log(list1)
+
+            this.setState({list:list1})
         }
         handleMarkTask(id){
             console.log("MarkTask",id);
-            this.list = this.state.list.filter((t) => {
-                if(t.id == id) {
-                    t.isDone = true;
+            const list1 = this.state.list
+
+            for( var i = 0; i < list1.length; i++){ 
+                if ( list1[i].id === id ) { 
+                  list1[i].isDone = true; 
                 }
-                return t;
-            })
-            this.setState({list: this.list})
-            console.log("hai-mark")
+              }
+              console.log(list1)
+
+            this.setState({list:list1})
         
         }
         render() {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ScrollView>
+                    <TaskNameForm onAddTask={this.handleAddTask} onDeleteTask={this.handleDeleteTask} onMarkTask={this.handleMarkTask}/>
+
+                        <Card containerStyle={{padding: 10, margin :25, backgroundColor: '#D1AB3E', alignContent: 'center'}}>
+                        <Text style={{color:'white' ,fontSize:25,paddingTop:30}}>Tasks To Do </Text>
                     {this.state.list.map((t) => 
                         <Task key={t.id} name={t.name} dueDate={t.dueDate} delete={t.delete} mark={t.mark} isDone={t.isDone}/>)}    
-                        <TaskNameForm onAddTask={this.handleAddTask} onDeleteTask={this.handleDeleteTask} onMarkTask={this.handleMarkTask}/>
+                        </Card>
+
+                    </ScrollView>
                 </View>
                 
             );
@@ -105,8 +117,8 @@ import {Card} from "react-native-elements";
             const task = { id: id, name: this.state.value, 
                            dueDate:this.state.dueDate, 
                            isDone:false,
-                           delete: <Button onPress={() => this.deleteTask(id)} title="delete" color="#009933" />,
-                           mark:<Button onPress= {() => this.markTask(id)} title="mark" color="#009933"/>};
+                           delete: <Button  onPress={() => this.deleteTask(id)} title="delete" color="pink" margin="10" />,
+                           mark:   <Button  onPress= {() => this.markTask(id)} title="mark" color="purple"/>};
             console.log(task);
             this.props.onAddTask(task);
             this.setState({value:""});
@@ -125,22 +137,50 @@ import {Card} from "react-native-elements";
         }
 
         handleChange(event) {
-            this.setState({ value: event.target.value });
+            this.setState({ value: event.nativeEvent.text });
         }
         handleDate(event){
-            this.setState({dueDate:event.target.value});
+            this.setState({dueDate: event.nativeEvent.text});
         }
         render() {
             console.log("render")
             return (
                 <View>
-                    <TextInput style={{backgroundColor :  "white" }}type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter Task Name :" />
-                    <TextInput style={{backgroundColor :  "white" }}type="date" value={this.state.dueDate} onChange={this.handleDate} placeholder="Enter Due Date :" />
+                    <Card containerStyle={{padding: 10, margin :30,  backgroundColor: '#D1AB3E', alignContent: 'center'}}>
+                    <Text>Task Name :</Text>
+                    <TextInput style={{margin:5,padding:5,backgroundColor :  "white" }}type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter Task Name :" />
+                    <Text>dueDate :</Text>
+                    <DatePicker
+                                style={{width: 200}}
+                                date={this.state.dueDate} //initial date from state
+                                mode="date" //The enum of date, datetime and time
+                                placeholder="select date"
+                                format="DD-MM-YYYY"
+                                minDate="01-01-2016"
+                                maxDate="01-01-2019"
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                customStyles={{
+                                    dateIcon: {
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 4,
+                                    marginLeft: 0
+                                    },
+                                    dateInput: {
+                                    marginLeft: 36
+                                    }
+                                }}
+                                onDateChange={(dueDate) => {this.setState({dueDate: dueDate})}} />
                     <Button title = "Add Task" onPress={this.handleSubmit} color="#009933"  />
+                    </Card>
+                    
                 </View>
                     
             );
         }
     }
-    
-    
+
+     
+
+
