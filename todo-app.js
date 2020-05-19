@@ -1,74 +1,114 @@
-let taskList = []
 
-class Task {
-    constructor(name, dueDate, isDone) {
-        this.taskId = Date.now();
-        this.name = name;
-        this.dueDate = dueDate;
-        this.isDone = isDone;
+
+function Task(props) {
+    return <li>{props.name},
+      <strong>Created on:</strong> {new Date().getMonth()}/{new Date().getDate()},
+      <strong>Due date:</strong> {props.dueDate}
+      <input type="checkbox" />
+      <button onClick={() => { props.deleteTask(props.id) }}>Delete</button>
+    </li>
+  }
+  class ToDo extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { list: props.list };
+  
+      this.handleAddTask = this.handleAddTask.bind(this);
+      this.handleDeleteTask = this.handleDeleteTask.bind(this);
+  
+    }
+    handleDeleteTask(taskId) {
+      console.log(taskId);
+      let updatedList = this.state.list.filter(t => t.id !== taskId);
+      console.log(updatedList);
+      this.setState({ list: updatedList });
     }
 
-    toString() {
-        let htmlText = '<li class="task" ><div>'
-        htmlText += this.name
-        htmlText += ", " + this.dueDate.getDate() 
-                 + "/" + this.dueDate.getMonth();
-        htmlText += '<input type="checkbox" name="isDone" id="isDone">'
-        htmlText += '<button onclick="deleteTask(';
-        htmlText += this.taskId;
-        htmlText += ')">Delete</button>';
-        htmlText += '</div></li>';
-        return htmlText;
+    handleAddTask(task) {
+      this.state.list.push(task);
+      this.setState({ list: this.state.list });
     }
-}
 
-function render() {
-    const listUI = document.getElementById("todolist")
-    listUI.innerHTML = "";
-    if (taskList.length === 0) listUI.innerHTML = "No tasks todo :-)"
-    taskList.forEach((task) => {
-        listUI.innerHTML += task.toString();
-    })
-}
+    render() {
+  
+      return (
+        <div>
+          <h1>TO DO LIST</h1>
+          <ol>{
+            this.state.list.map((t) =>
+              <Task key={t.id}
+                id={t.id}
+                name={t.name}
+                dueDate={t.dueDate}
+                Date={t.date}
+                deleteTask={this.handleDeleteTask} />
+            )}
+          </ol>
+          <Form onAddTask={this.handleAddTask} />
+  
+        </div>
+  
+      );
+    }
+  }
 
-function deleteTask(taskId) {
-    taskList = taskList.filter(
-        (t) => {
-            if(t.taskId != taskId) 
-            return t;
-        }
-    );
-    // call a web api to update the database on the server
-    
-    // update the DOM
-    render()
-    console.log(taskList);
-}
+  class Form extends React.Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        value: '',
+        datevalue: 'No duedate'
+      };
+  
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleDateChange = this.handleDateChange.bind(this);
+    }
+  
+    handleChange(event) {
+      this.setState({ value: event.target.value });
+    }
+  
+    handleDateChange(event) {
+      this.setState({ datevalue: event.target.value });
+  
+    }
 
-function createTask() {
-    const taskName = document.getElementById("taskName").value;
-    addTask(new Task(taskName, new Date(), false));
-}
+    handleSubmit(event) {
+      const tasksListItems = this.props.tasksListItems;
+      event.preventDefault();
+      const task = {
+        id: Date.now(),
+        name: this.state.value,
+        date: new Date(),
+        dueDate: this.state.datevalue
+      };
+      this.props.onAddTask(task);
+  
+    }
 
-function addTask(t) {
-    taskList.push(t)
-    // call a web api to update the database on the server
-    render();
-    console.log(taskList)
-}
-
-function init() {
-    console.log("init called");
-
-    // call a web api to retrieve the task list
-    // write a function to send a api request
-    // get the JSON
-    // assign it to taskList
-    // render
-
-    task = new Task("welcome task", new Date("May 30, 2020"), false);
-    addTask(task);
-    console.log(task);
-}
-
-init();
+    render() {
+      return (
+        <form onSubmit={this.handleSubmit}>
+          <input
+            type="text"
+            value={this.state.value}
+            onChange={this.handleChange} />
+  
+          <input
+            type="date"
+            value={this.state.datevalue}
+            date-format="DD MMMM YYYY"
+            onChange={this.handleDateChange} />
+  
+          <input
+            type="submit"
+            value="AddTask" />
+  
+        </form>
+  
+      );
+    }
+  
+  }
+  ReactDOM.render(<ToDo list={[]} />, document.getElementById('todo'));
