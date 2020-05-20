@@ -11,7 +11,7 @@ class Task {
     toString() {
         let htmlText = '<li class="task" '
         if (this.isDone == true) {
-            htmlText += 'style="color:green;" '
+            htmlText += 'style="color:red;" '
         }
         htmlText += 'id = "'
         htmlText += this.taskId
