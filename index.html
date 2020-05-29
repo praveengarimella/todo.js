@@ -1,18 +1,26 @@
 <!DOCTYPE html>
-<head>
-    <title>TODO App</title>
-</head>
-<body>
-    <h1>ToDo List</h1>
-    <ol>
-        <div id="todolist"></div>
-    </ol>
-    <input type="text" name="taskName" id="taskName">
-    <button onclick="createTask()">Add Task</button>
-    <label for="dueDate">Due date:</label>
-    <input type="date" id="dueDate" name="dueDate">
-    <p class="message" style="color:rgb(255, 115, 0);"></p>
 
-    <script src="todo-app.js"></script>
+<head>
+    <script src="{{ url_for(filename='todo-app.js') }}"></script>
+
+    <title>TODO Application</title>
+
+</head>
+
+<body>
+
+	<div class='container'>
+
+	    <ol id="todo-list"></ol>
+    	
+        <input type="text" name="taskName" id="taskName" placeholder="Task">
+        
+        <input type="date" name="dueDate" id="dueDate" placeholder="Due Date">
+        
+        <button onclick="createTask()">Add Task</button>
+	
+    </div>
+
 </body>
+
 </html>

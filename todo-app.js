@@ -1,141 +1,127 @@
-let taskList = []
-var newList=[]
-var time_list = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
-
-var check=[]
-
-var currDate = new Date();
-var date = currDate.getDate() + "/" + currDate.getMonth() + 1;
+var task_list = []
 
 class Task {
-    constructor(name, currentDate, isDone, dueDate, taskId) {
-      if (typeof taskId === "undefined") {
+    constructor(name, dueDate, isDone) {
         this.taskId = Date.now();
         this.name = name;
-        this.currentDate = date;
-        this.isDone = isDone;
         this.dueDate = dueDate;
-      } else {
-        this.taskId = taskId;
-        this.name = name;
-        this.currentDate = currentDate;
         this.isDone = isDone;
-        this.dueDate = dueDate;
-      }
     }
 
     toString() {
-        let htmlText = '<li class="task" ><div class ="eachTask">';
-        htmlText += this.name;
-        htmlText += ", " + this.currentDate;
-        htmlText += ", " + "Due date: " + this.dueDate;        
-        htmlText += '<button onclick="del_Task(';
+        let htmlText = '<li class="task" '
+        if (this.isDone == true) {
+            htmlText += 'style="color:red;" '
+        }
+        htmlText += 'id = "'
+        htmlText += this.taskId
+        htmlText += '"><div>'
+        htmlText += this.name
+        htmlText += ", " + this.dueDate.getDate() 
+                 + "/" + this.dueDate.getMonth();
+        htmlText += '<input type="checkbox" name="isDone" id="isDone" onclick="updateTask('
+        htmlText += this.taskId
+        htmlText += ')">';
+        htmlText += '<button onclick="deleteTask(';
         htmlText += this.taskId;
         htmlText += ')">Delete</button>';
-        htmlText += "</div></li>";
+        htmlText += '</div></li>';
         return htmlText;
-      }
     }
-
-function render() {
-    console.log("entered")
-    const listUI = document.getElementById("todolist");
-    listUI.innerHTML = "";
-    if (newList.length === 0) listUI.innerHTML = "No tasks scheduled :-)";
-    newList.forEach((task) => {
-      listUI.innerHTML += task.toString();
-    });
-  }
-
-function del_Task(taskId) {
-    newList = newList.filter(
-        (t) => {
-            if(t.taskId != taskId) 
-            return t;
-        }
-    );
-    var request = new XMLHttpRequest();
-    request.open("POST", "http://localhost:5000/api/update/", true);
-    request.setRequestHeader("Content-Type", "application/json");
-    request.send(JSON.stringify(newList));
-    render()
-    console.log(newList);
 }
 
 function createTask() {
     const taskName = document.getElementById("taskName").value;
-    const dueDate = document.getElementById("dueDate").value;
-    let msg = document.getElementById("message");
-    console.log(taskName);
-  
-    if (taskName === "") {
-      document.querySelector(".message").innerHTML = "Enter Task name.";
-      return;
-    }
-  
-    if (dueDate < time_list) {
-      document.querySelector(".message").innerHTML = "Enter a valid date.";
-      return;
-    }
-  
-    adding_Task(new Task(taskName, new Date(), false, dueDate));
-  }
-function adding_Task(t) {
-    newList.push(t)
-    var request = new XMLHttpRequest();
-    request.open("POST", "http://localhost:5000/api/update/", true);
-    request.setRequestHeader("Content-Type", "application/json");
-    request.send(JSON.stringify(newList));
-    render();
-    console.log(taskList)
+    let dueDate = document.getElementById("dueDate").value;
+    dueDate = dueDate.split('-')
+    addTask(new Task(taskName, new Date(dueDate[0], dueDate[1], dueDate[2]), false));
 }
-  
-  function deleteId(taskId) {
-    check = check.filter((t) => {
-      if (t != taskId) return t;
-    });
-  }
-  
-  function isChecked(id) {
-    if (check.length === 0) return 0;
-    for (let k = 0; k < check.length; k++) {
-      if (check[k] === id) {
-        return 1;
-      }
-    }
-  }
 
-  function fetchData() {
-    var request = new XMLHttpRequest();
-    request.open("GET", "http://localhost:5000/api/todo/", true);
-    request.onload = function () {
-      if (request.status === 200) {
-        let data = JSON.parse(request.responseText);
-        taskList = data;
-        console.log(taskList);
-        console.log(taskList);
-        for (let i = 0; i < taskList.length; i++) {
-          task = new Task(
-            taskList[i].name,
-            taskList[i].currentDate,
-            taskList[i].isDone,
-            taskList[i].dueDate,
-            taskList[i].taskId
-          );
-          console.log(task);
-          newList.push(task);
-          render();
+function addTask(t) {
+    task_list.push(t)
+    // calling  web api to update the database 
+    const request = new XMLHttpRequest()
+    request.open('POST', `/api/add?id=${t.taskId}&name=${t.name}&date=${t.dueDate}&done=${t.isDone}`)
+    request.send()
+    request.onload = () => {
+        render();
+        console.log(task_list)        
+    }
+
+}
+
+
+function deleteTask(taskId) {
+    task_list = task_list.filter(
+        (t) => {
+            if(t.taskId != taskId) {
+                return t;
+            }
         }
-        console.log(check);
-        return data;
-      }
-    };
-    request.send();
-  }
-function init() {   
+    );
+    // TO call a web api to update the database on the server
+    const request = new XMLHttpRequest()
+    request.open('POST', `/api/delete?id=${taskId}`)
+    request.send()
+    request.onload = () => {
+        render();
+        console.log(task_list)        
+    }
+}
+
+function taskStatus(taskId) {
+    let i = 0
+    for(i = 0; i < task_list.length; i++) {
+        if (task_list[i].taskId == taskId) {
+            return i
+        }
+    }
+}
+
+function updateTask(taskId) {
+    let i = taskStatus(taskId)
+    if (task_list[i].isDone == false) task_list[i].isDone = true
+    else task_list[i].isDone = false 
+    const request = new XMLHttpRequest()
+    request.open('POST', `/api/update?id=${taskId}&done=${task_list[i].isDone}`)
+    request.send()
+    request.onload = () => {
+        // update the DOM
+        render();
+        console.log(task_list)        
+    }
+}
+
+function render() {
+    const listUI = document.getElementById("todo-list")
+    listUI.innerHTML = "";
+    if (task_list.length === 0) listUI.innerHTML = "No tasks scheduled...!"
+    task_list.forEach((task) => {
+        listUI.innerHTML += task.toString();
+    })
+}
+
+
+function init() {
     console.log("init called");
-    fetchData();
-    render();
+
+    const request = new XMLHttpRequest()
+    request.open('POST', '/init')
+    request.send()
+    request.onload = () => {
+        let data = JSON.parse(request.responseText)
+        for (var id in data) {
+            curr_task = new Task(data[id]['name'], new Date(data[id]['date']), data[id]['done']);
+            curr_task.taskId = data[id]['id']
+            if (data[id]['done'] == "true")
+                curr_task.isDone = true
+            else 
+                curr_task.isDone = false
+            task_list.push(curr_task)
+        }
+        console.log(task_list)
+        render()
+    }
 }
 
 init();
