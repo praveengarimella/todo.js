@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<head>
+    <script src="{{ url_for(filename='todo-app.js') }}"></script>
+
+    <title>TODO Application</title>
+
+</head>
+
+<body>
+
+	<div class='container'>
+
+	    <ol id="todo-list"></ol>
+    	
+        <input type="text" name="taskName" id="taskName" placeholder="Task">
+        
+        <input type="date" name="dueDate" id="dueDate" placeholder="Due Date">
+        
+        <button onclick="createTask()">Add Task</button>
+	
+    </div>
+
+</body>
+
+</html>
